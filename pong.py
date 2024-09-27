@@ -1,5 +1,6 @@
 import pygame, sys
 
+
 class Ball:
     def __init__(self, screen, color, posX, posY, radius):
         self.screen = screen
@@ -29,11 +30,12 @@ class Ball:
         self.dy = -self.dy
 
     def restart_post(self):
-        self.posX = WIDTH//2
-        self.posY = HEIGHT//2
+        self.posX = WIDTH // 2
+        self.posY = HEIGHT // 2
         self.dx = 0
         self.dy = 0
         self.show()
+
 
 class Paddle:
     def __init__(self, screen, color, posX, posY, width, height):
@@ -47,7 +49,7 @@ class Paddle:
         self.show()
 
     def show(self):
-        pygame.draw.rect( self.screen, self.color, (self.posX, self.posY, self.width, self.height))
+        pygame.draw.rect(self.screen, self.color, (self.posX, self.posY, self.width, self.height))
 
     def move(self):
         if self.state == 'up':
@@ -64,9 +66,10 @@ class Paddle:
             self.posY = HEIGHT - self.height
 
     def restart_pos(self):
-        self.posY = HEIGHT//2 - self.height//2
+        self.posY = HEIGHT // 2 - self.height // 2
         self.state = 'stopped'
         self.show()
+
 
 class Score:
     def __init__(self, screen, points, posX, posY):
@@ -74,16 +77,16 @@ class Score:
         self.points = points
         self.posX = posX
         self.posY = posY
-        self.font = pygame.font.SysFont( "monospace", 80, bold=True )
-        self.label = self.font.render( self.points, 0, WHITE )
+        self.font = pygame.font.SysFont("monospace", 80, bold=True)
+        self.label = self.font.render(self.points, 0, WHITE)
 
     def show(self):
-        self.screen.blit(self.label, ( self.posX - self.label.get_rect().width // 2, self.posY ) )
+        self.screen.blit(self.label, (self.posX - self.label.get_rect().width // 2, self.posY))
 
     def increase(self):
         points = int(self.points) + 1
         self.points = str(points)
-        self.label = self.font.render( self.points, 0, WHITE )
+        self.label = self.font.render(self.points, 0, WHITE)
 
     def restart(self):
         self.points = '0'
@@ -106,22 +109,23 @@ class CollisionManager:
 
         return False
 
-    def between_ball_and_walls(self,ball):
+    def between_ball_and_walls(self, ball):
 
-        #top collision
+        # top collision
         if ball.posY - ball.radius <= 0:
             return True
 
-        #bottom collision
+        # bottom collision
         if ball.posY + ball.radius >= HEIGHT:
             return True
 
         return False
+
     def check_goal_player1(self, ball):
         return ball.posX - ball.radius >= WIDTH
 
     def check_goal_player2(self, ball):
-        return  ball.posX + ball.radius <= 0
+        return ball.posX + ball.radius <= 0
 
 
 pygame.init()
@@ -133,11 +137,13 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption( 'PONG GAME' )
+pygame.display.set_caption('PONG GAME')
+
 
 def paint_black():
     screen.fill(BLACK)
-    pygame.draw.line(screen, WHITE, (WIDTH//2, 0),(WIDTH//2,HEIGHT), 5 )
+    pygame.draw.line(screen, WHITE, (WIDTH // 2, 0), (WIDTH // 2, HEIGHT), 5)
+
 
 def restart():
     paint_black()
@@ -147,20 +153,21 @@ def restart():
     paddle1.restart_pos()
     paddle2.restart_pos()
 
+
 paint_black()
 
-#OBJECTS
-ball = Ball(screen, WHITE, WIDTH//2, HEIGHT//2, 15)
-paddle1 = Paddle(screen, WHITE, 15, HEIGHT//2 - 60, 20, 120)
-paddle2 = Paddle(screen, WHITE, WIDTH - 20 - 25, HEIGHT//2 - 60, 20, 120)
+# OBJECTS
+ball = Ball(screen, WHITE, WIDTH // 2, HEIGHT // 2, 15)
+paddle1 = Paddle(screen, WHITE, 15, HEIGHT // 2 - 60, 20, 120)
+paddle2 = Paddle(screen, WHITE, WIDTH - 20 - 25, HEIGHT // 2 - 60, 20, 120)
 collision = CollisionManager()
-score1 = Score( screen, '0', WIDTH//4, 15)
-score2 = Score( screen, '0', WIDTH-WIDTH//4, 15)
+score1 = Score(screen, '0', WIDTH // 4, 15)
+score2 = Score(screen, '0', WIDTH - WIDTH // 4, 15)
 
-#variable
+# variable
 playing = False
 
-#mainloop
+# mainloop
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -191,25 +198,23 @@ while True:
             paddle1.state = 'stopped'
             paddle2.state = 'stopped'
 
-
-
     if playing:
         paint_black()
-        #ball movement
+        # ball movement
         ball.move()
         ball.show()
 
-        #paddle1
+        # paddle1
         paddle1.move()
         paddle1.clamp()
         paddle1.show()
 
-        #paddle2
+        # paddle2
         paddle2.move()
         paddle2.clamp()
         paddle2.show()
 
-        #check for collision
+        # check for collision
         if collision.between_ball_and_paddle1(ball, paddle1):
             ball.paddle_collision()
 
@@ -225,13 +230,11 @@ while True:
             paddle1.restart_pos()
             paddle2.restart_pos()
 
-
         if collision.check_goal_player2(ball):
             score2.increase()
             ball.restart_post()
             paddle1.restart_pos()
             paddle2.restart_pos()
-
 
     score1.show()
     score2.show()
